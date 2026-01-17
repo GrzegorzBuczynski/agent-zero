@@ -1,0 +1,57 @@
+
+# Uruchom zbudowanie i uruchomienie kontenerów
+docker-compose -f docker/run/docker-compose.yml up --build
+# Restart kontenerów
+docker-compose restart
+docker-compose up --build
+# Uruchom w tle
+cd docker\run
+docker-compose up -d
+# Z głównego folderu
+docker-compose -f docker/run/docker-compose.yml up -d
+# Aby zatrzymać
+docker-compose down
+# 
+docker-compose up
+
+
+# Logi w live (follow)
+docker-compose logs -f
+
+# Lub z głównego folderu
+docker-compose -f docker/run/docker-compose.yml logs -f
+
+# Tylko ostatnie 100 linii
+docker-compose logs -f --tail=100
+
+# Logi od konkretnego czasu
+docker-compose logs -f --since 5m
+
+
+# Direct logs z kontenera
+docker logs -f agent-zero
+
+# Ostatnie 50 linii
+docker logs -f --tail=50 agent-zero
+
+Ctrl+C aby wyjść z logów (nie zatrzyma kontenera).
+
+Powinieneś zobaczyć Chain of Thought agenta - co myśli, jakie tools używa, itp.
+
+
+
+ollama pull mistral         # 7B, dobrze wspiera tools
+ollama pull neural-chat     # 7B, dedykowany do tool calling
+ollama pull llama2-uncensored  # 7B
+
+ollama pull mixtral         # 46B, bardzo zdolny do tool calling
+# Potem ustawić kontekst na 40k tokenów:
+ollama run mixtral:8x7b --num-ctx 40000
+
+ollama
+agent-zero settings
+mixtral:8x7b
+http://host.docker.internal:11434
+40000
+temperature=0
+num_ctx=30000

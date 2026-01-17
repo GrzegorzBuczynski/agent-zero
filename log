@@ -1,0 +1,998 @@
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:create_adhoc_task
+agent-zero  | Create a task within the scheduler system with the type "adhoc".
+agent-zero  | The adhoc type of tasks is being run manually by "scheduler:run_task" tool or by the user via ui.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The name of the task, will also be displayed when listing tasks
+agent-zero  | * system_prompt: str - The system prompt to be used when executing the task
+agent-zero  | * prompt: str - The actual prompt with the task definition
+agent-zero  | * attachments: list[str] - Here you can add message attachments, valid are filesystem paths and internet urls
+agent-zero  | * dedicated_context: bool - if false, then the task will run in the context it was created in. If true, the task will have it's own context. If unspecified then false is assumed. The tasks run in the context they were created in by default.
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to create an adhoc task that can be run manually when needed"
+agent-zero  |     ],
+agent-zero  |     "headline": "Creating on-demand email task",
+agent-zero  |     "tool_name": "scheduler:create_adhoc_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XXX",
+agent-zero  |         "system_prompt": "You are a software developer",
+agent-zero  |         "prompt": "Send the user an email with a greeting using python and smtp. The user's address is: xxx@yyy.zzz",
+agent-zero  |         "attachments": [],
+agent-zero  |         "dedicated_context": false
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:create_planned_task
+agent-zero  | Create a task within the scheduler system with the type "planned".
+agent-zero  | The planned type of tasks is being run by a fixed plan, a list of datetimes that you must provide.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The name of the task, will also be displayed when listing tasks
+agent-zero  | * system_prompt: str - The system prompt to be used when executing the task
+agent-zero  | * prompt: str - The actual prompt with the task definition
+agent-zero  | * plan: list(iso datetime string) - the list of all execution timestamps. The dates should be in the 24 hour (!) strftime iso format: "%Y-%m-%dT%H:%M:%S"
+agent-zero  | * attachments: list[str] - Here you can add message attachments, valid are filesystem paths and internet urls
+agent-zero  | * dedicated_context: bool - if false, then the task will run in the context it was created in. If true, the task will have it's own context. If unspecified then false is assumed. The tasks run in the context they were created in by default.
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to create a planned task to run tomorrow at 6:25 PM",
+agent-zero  |         "Today is 2025-04-29 according to system prompt"
+agent-zero  |     ],
+agent-zero  |     "headline": "Creating planned task for specific datetime",
+agent-zero  |     "tool_name": "scheduler:create_planned_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XXX",
+agent-zero  |         "system_prompt": "You are a software developer",
+agent-zero  |         "prompt": "Send the user an email with a greeting using python and smtp. The user's address is: xxx@yyy.zzz",
+agent-zero  |         "attachments": [],
+agent-zero  |         "plan": ["2025-04-29T18:25:00"],
+agent-zero  |         "dedicated_context": false
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:wait_for_task
+agent-zero  | Wait for the completion of a scheduler task identified by the uuid argument and return the result of last execution of the task.     
+agent-zero  | Attention: You can only wait for tasks running in a different chat context (dedicated). Tasks with dedicated_context=False can not be waited for.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * uuid: string - The uuid of the task to wait for. Can be retrieved for example from "scheduler:tasks_list"
+agent-zero  | 
+agent-zero  | ##### Usage (wait for task with uuid "xyz-123"):
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need the most current result of the task xyz-123",
+agent-zero  |     ],
+agent-zero  |     "headline": "Waiting for task completion and results",
+agent-zero  |     "tool_name": "scheduler:wait_for_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "uuid": "xyz-123",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### search_engine:
+agent-zero  | provide query arg get search results
+agent-zero  | returns list urls titles descriptions
+agent-zero  | **Example usage**:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Searching web for video content",
+agent-zero  |     "tool_name": "search_engine",
+agent-zero  |     "tool_args": {
+agent-zero  |         "query": "Video of...",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### wait
+agent-zero  | pause execution for a set time or until a timestamp
+agent-zero  | use args "seconds" "minutes" "hours" "days" for duration
+agent-zero  | use "until" with ISO timestamp for a specific time
+agent-zero  | usage:
+agent-zero  | 
+agent-zero  | 1 wait duration
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to wait..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "wait",
+agent-zero  |     "tool_args": {
+agent-zero  |         "minutes": 1,
+agent-zero  |         "seconds": 30
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 2 wait timestamp
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I will wait until..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "wait",
+agent-zero  |     "tool_args": {
+agent-zero  |         "until": "2025-10-20T10:00:00Z"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | ~~~
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ## "Multimodal (Vision) Agent Tools" available:
+agent-zero  | 
+agent-zero  | ### vision_load:
+agent-zero  | load image data to LLM
+agent-zero  | use paths arg for attachments
+agent-zero  | multiple images if needed
+agent-zero  | only bitmaps supported convert first if needed
+agent-zero  | 
+agent-zero  | **Example usage**:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to see the image...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Loading image for visual analysis",
+agent-zero  |     "tool_name": "vision_load",
+agent-zero  |     "tool_args": {
+agent-zero  |         "paths": ["/path/to/image.png"],
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | Response: 
+agent-zero  | 1. Headline: Prepare a detailed report on Aerodynamics of Commercial Aircraft
+agent-zero  | 2. Tool name: document\_query
+agent-zero  | 3. Tool args:
+agent-zero  | ```json
+agent-zero  | {
+agent-zero  |    "document": "https://example.com/aerodynamics-report-template",
+agent-zero  |    "queries": [
+agent-zero  |       "What is aerodynamics in commercial aviation?",
+agent-zero  |       "How do structural loads affect aircraft design?",
+agent-zero  |       "Explain fail-safe and damage tolerance in CS-25 certification",
+agent-zero  |       "Describe engine, fuel, hydraulic, and electrical systems in commercial aircraft",
+agent-zero  |       "Discuss redundancy, control, avionics, and automation in modern planes",
+agent-zero  |       "Analyze pilot operations, human factors, safety, CRM, workload, errors, fatigue, stress, information overload, training, simulators, and emergency procedures"
+agent-zero  |    ]
+agent-zero  | }
+agent-zero  | ```
+agent-zero  | The assistant has provided a headline, tool name, and tool arguments for generating a detailed report on the Aerodynamics of Commercial Aircraft. The report will be based on a template from a given URL, and it will answer a list of questions related to commercial aviation. This information can be used as input for further processing or task completion.
+agent-zero  | 
+agent-zero  | The user's message also includes some additional context (marked as [EXTRAS]) that may be useful in generating the report:
+agent-zero  | 
+agent-zero  | - Memories on the topic: These are previous memories about the topic, which might contain relevant information but should not be overly relied upon.
+agent-zero  | - Current system date and time of user: The current datetime, which can be used to ensure the report is up-to-date.
+agent-zero  | - Agent info: Information about the agent, including its number and profile.
+agent-zero  | 
+agent-zero  | These additional details can help the assistant create a more informed and contextually relevant report on the Aerodynamics of Commercial Aircraft.
+agent-zero  | 
+agent-zero  | A1: Using tool ''
+agent-zero  | 
+agent-zero  | A1: Response from tool ''
+agent-zero  | Tool  not found. Available tools: \n## Tools available:
+agent-zero  | 
+agent-zero  | ### a2a_chat:
+agent-zero  | This tool lets Agent Zero chat with any other FastA2A-compatible agent.
+agent-zero  | It automatically keeps conversation **context** (so each subsequent call
+agent-zero  | continues the same dialogue) and supports optional file attachments.
+agent-zero  | 
+agent-zero  | #### What the tool can do
+agent-zero  | * Start a brand-new conversation with a remote agent.
+agent-zero  | * Continue an existing conversation transparently (context handled for you).
+agent-zero  | * Send text plus optional file URIs (images, docs, etc.).
+agent-zero  | * Receive the assistant’s reply as plain text.
+agent-zero  | 
+agent-zero  | #### Arguments
+agent-zero  | * `agent_url` (string, required) – Base URL of the *remote* agent.
+agent-zero  |   • Accepts `host:port`, `http://host:port`, or full path ending in `/a2a`.
+agent-zero  | * `message` (string, required) – The text you want to send.
+agent-zero  | * `attachments` (list[string], optional) – URIs pointing to files you want
+agent-zero  |   to send along with the message (can be http(s):// or file path).
+agent-zero  | * `reset` (boolean, optional) – Set to `true` to start a **new** conversation
+agent-zero  |   with the same `agent_url` (clears stored context). Default `false`.
+agent-zero  | 
+agent-zero  | > Leave **context_id** out – the tool handles it internally.
+agent-zero  | 
+agent-zero  | #### Usage – first message
+agent-zero  | ##### Request
+agent-zero  | {
+agent-zero  |   "thoughts": [
+agent-zero  |     "I want to ask the weather-bot for today’s forecast."
+agent-zero  |   ],
+agent-zero  |   "headline": "Ask remote agent (weather-bot)",
+agent-zero  |   "tool_name": "a2a_chat",
+agent-zero  |   "tool_args": {
+agent-zero  |     "agent_url": "http://weather.example.com:8000/a2a",
+agent-zero  |     "message": "Hello! What’s the forecast for Berlin today?",
+agent-zero  |     "attachments": [],
+agent-zero  |     "reset": false
+agent-zero  |   }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | ##### Response (assistant-side)
+agent-zero  | ☀️ It will be sunny with a high of 22 °C.
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### Usage – follow-up (context automatically preserved)
+agent-zero  | ##### Request
+agent-zero  | {
+agent-zero  |   "thoughts": [
+agent-zero  |     "Need tomorrow’s forecast too."
+agent-zero  |   ],
+agent-zero  |   "headline": "Follow-up question",
+agent-zero  |   "tool_name": "a2a_chat",
+agent-zero  |   "tool_args": {
+agent-zero  |     "agent_url": "http://weather.example.com:8000/a2a",
+agent-zero  |     "message": "And tomorrow?",
+agent-zero  |     "attachments": [],
+agent-zero  |     "reset": false
+agent-zero  |   }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | ##### Response
+agent-zero  | 🌦️ Partly cloudy with showers, high 18 °C.
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### Notes
+agent-zero  | 1. **New conversation** – omit previous `agent_url` or use a *different* URL.
+agent-zero  | 2. **Attachments** – supply absolute URIs ("http://…", "file:/…").
+agent-zero  | 3. The tool stores session IDs per `agent_url` inside the current
+agent-zero  |    `AgentContext` – no manual handling required.
+agent-zero  | 4. Use `"reset": true` to forget previous context and start a new chat.
+agent-zero  | 5. The remote agent must implement FastA2A v0.2+ protocol.
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### behaviour_adjustment:
+agent-zero  | update agent behaviour per user request
+agent-zero  | write instructions to add or remove to adjustments arg
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Adjusting agent behavior per user request",
+agent-zero  |     "tool_name": "behaviour_adjustment",
+agent-zero  |     "tool_args": {
+agent-zero  |         "adjustments": "remove...",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### browser_agent:
+agent-zero  | 
+agent-zero  | subordinate agent controls playwright browser
+agent-zero  | message argument talks to agent give clear instructions credentials task based
+agent-zero  | reset argument spawns new agent
+agent-zero  | do not reset if iterating
+agent-zero  | be precise descriptive like: open google login and end task, log in using ... and end task
+agent-zero  | when following up start: considering open pages
+agent-zero  | dont use phrase wait for instructions use end task
+agent-zero  | downloads default in /a0/tmp/downloads
+agent-zero  | pass secrets and variables in message when needed
+agent-zero  | 
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |   "thoughts": ["I need to log in to..."],
+agent-zero  |   "headline": "Opening new browser session for login",
+agent-zero  |   "tool_name": "browser_agent",
+agent-zero  |   "tool_args": {
+agent-zero  |     "message": "Open and log me into...",
+agent-zero  |     "reset": "true"
+agent-zero  |   }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | {
+agent-zero  |   "thoughts": ["I need to log in to..."],
+agent-zero  |   "headline": "Continuing with existing browser session",
+agent-zero  |   "tool_name": "browser_agent",
+agent-zero  |   "tool_args": {
+agent-zero  |     "message": "Considering open pages, click...",
+agent-zero  |     "reset": "false"
+agent-zero  |   }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### call_subordinate
+agent-zero  | 
+agent-zero  | you can use subordinates for subtasks
+agent-zero  | subordinates can be scientist coder engineer etc
+agent-zero  | message field: always describe role, task details goal overview for new subordinate
+agent-zero  | delegate specific subtasks not entire task
+agent-zero  | reset arg usage:
+agent-zero  |   "true": spawn new subordinate
+agent-zero  |   "false": continue existing subordinate
+agent-zero  | if superior, orchestrate
+agent-zero  | respond to existing subordinates using call_subordinate tool with reset false
+agent-zero  | profile arg usage: select from available profiles for specialized subordinates, leave empty for default
+agent-zero  | 
+agent-zero  | example usage
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "The result seems to be ok but...",
+agent-zero  |         "I will ask a coder subordinate to fix...",
+agent-zero  |     ],
+agent-zero  |     "tool_name": "call_subordinate",
+agent-zero  |     "tool_args": {
+agent-zero  |         "profile": "",
+agent-zero  |         "message": "...",
+agent-zero  |         "reset": "true"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | **response handling**
+agent-zero  | - you might be part of long chain of subordinates, avoid slow and expensive rewriting subordinate responses, instead use `§§include(<path>)` alias to include the response as is
+agent-zero  | 
+agent-zero  | **available profiles:**
+agent-zero  | [{'name': 'agent0', 'context': '# Agent 0\n- main agent of the system\n- communicates to user and delegates to subordinates\n- general purpose assistant, communication skills, formatted output'}, {'name': 'default', 'context': '# Default prompts\n- default prompt file templates\n- should be inherited and overriden by specialized prompt profiles'}, {'name': 'developer', 'context': '# Developer\n- agent specialized in complex software development'}, {'name': 'hacker', 'context': '# Hacker\n- agent specialized in cyber security and penetration testing'}, {'name': 'researcher', 'context': '# Researcher\n- agent specialized in research, data analysis and reporting'}]
+agent-zero  | 
+agent-zero  | ### code_execution_tool
+agent-zero  | 
+agent-zero  | execute terminal commands python nodejs code for computation or software tasks
+agent-zero  | place code in "code" arg; escape carefully and indent properly
+agent-zero  | select "runtime" arg: "terminal" "python" "nodejs" "output" "reset"
+agent-zero  | select "session" number, 0 default, others for multitasking
+agent-zero  | if code runs long, use "output" to wait, "reset" to kill process
+agent-zero  | use "pip" "npm" "apt-get" in "terminal" to install packages
+agent-zero  | to output, use print() or console.log()
+agent-zero  | if tool outputs error, adjust code before retrying;
+agent-zero  | important: check code for placeholders or demo data; replace with real variables; don't reuse snippets
+agent-zero  | don't use with other tools except thoughts; wait for response before using others
+agent-zero  | check dependencies before running code
+agent-zero  | output may end with [SYSTEM: ...] information comming from framework, not terminal
+agent-zero  | usage:
+agent-zero  | 
+agent-zero  | 1 execute python code
+agent-zero  | 
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "Need to do...",
+agent-zero  |         "I can use...",
+agent-zero  |         "Then I can...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Executing Python code to check current directory",
+agent-zero  |     "tool_name": "code_execution_tool",
+agent-zero  |     "tool_args": {
+agent-zero  |         "runtime": "python",
+agent-zero  |         "session": 0,
+agent-zero  |         "code": "import os\nprint(os.getcwd())",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 2 execute terminal command
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "Need to do...",
+agent-zero  |         "Need to install...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Installing zip package via terminal",
+agent-zero  |     "tool_name": "code_execution_tool",
+agent-zero  |     "tool_args": {
+agent-zero  |         "runtime": "terminal",
+agent-zero  |         "session": 0,
+agent-zero  |         "code": "apt-get install zip",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 2.1 wait for output with long-running scripts
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "Waiting for program to finish...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Waiting for long-running program to complete",
+agent-zero  |     "tool_name": "code_execution_tool",
+agent-zero  |     "tool_args": {
+agent-zero  |         "runtime": "output",
+agent-zero  |         "session": 0,
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 2.2 reset terminal
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "code_execution_tool not responding...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Resetting unresponsive terminal session",
+agent-zero  |     "tool_name": "code_execution_tool",
+agent-zero  |     "tool_args": {
+agent-zero  |         "runtime": "reset",
+agent-zero  |         "session": 0,
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### document_query
+agent-zero  | read and analyze remote/local documents get text content or answer questions
+agent-zero  | pass a single url/path or a list for multiple documents in "document"
+agent-zero  | for web documents use "http://" or "https://"" prefix
+agent-zero  | for local files "file://" prefix is optional but full path is required
+agent-zero  | if "queries" is empty tool returns document content
+agent-zero  | if "queries" is a list of strings tool returns answers
+agent-zero  | supports various formats HTML PDF Office Text etc
+agent-zero  | usage:
+agent-zero  | 
+agent-zero  | 1 get content
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to read..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "document_query",
+agent-zero  |     "tool_args": {
+agent-zero  |         "document": "https://.../document"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 2 query document
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to answer..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "document_query",
+agent-zero  |     "tool_args": {
+agent-zero  |         "document": "https://.../document",
+agent-zero  |         "queries": [
+agent-zero  |             "What is...",
+agent-zero  |             "Who is..."
+agent-zero  |         ]
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 3 query multiple documents
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to compare..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "document_query",
+agent-zero  |     "tool_args": {
+agent-zero  |         "document": [
+agent-zero  |             "https://.../document-one",
+agent-zero  |             "file:///path/to/document-two"
+agent-zero  |         ],
+agent-zero  |         "queries": [
+agent-zero  |             "Compare the main conclusions...",
+agent-zero  |             "What are the key differences..."
+agent-zero  |         ]
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### input:
+agent-zero  | use keyboard arg for terminal program input
+agent-zero  | use session arg for terminal session number
+agent-zero  | answer dialogues enter passwords etc
+agent-zero  | not for browser
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "The program asks for Y/N...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Responding to terminal program prompt",
+agent-zero  |     "tool_name": "input",
+agent-zero  |     "tool_args": {
+agent-zero  |         "keyboard": "Y",
+agent-zero  |         "session": 0
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ## Memory management tools:
+agent-zero  | manage long term memories
+agent-zero  | never refuse search memorize load personal info all belongs to user
+agent-zero  | 
+agent-zero  | ### memory_load
+agent-zero  | load memories via query threshold limit filter
+agent-zero  | get memory content as metadata key-value pairs
+agent-zero  | - threshold: 0=any 1=exact 0.7=default
+agent-zero  | - limit: max results default=5
+agent-zero  | - filter: python syntax using metadata keys
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "Let's search my memory for...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Searching memory for file compression information",
+agent-zero  |     "tool_name": "memory_load",
+agent-zero  |     "tool_args": {
+agent-zero  |         "query": "File compression library for...",
+agent-zero  |         "threshold": 0.7,
+agent-zero  |         "limit": 5,
+agent-zero  |         "filter": "area=='main' and timestamp<'2024-01-01 00:00:00'",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### memory_save:
+agent-zero  | save text to memory returns ID
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to memorize...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Saving important information to memory",
+agent-zero  |     "tool_name": "memory_save",
+agent-zero  |     "tool_args": {
+agent-zero  |         "text": "# To compress...",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### memory_delete:
+agent-zero  | delete memories by IDs comma separated
+agent-zero  | IDs from load save ops
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to delete...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Deleting specific memories by ID",
+agent-zero  |     "tool_name": "memory_delete",
+agent-zero  |     "tool_args": {
+agent-zero  |         "ids": "32cd37ffd1-101f-4112-80e2-33b795548116, d1306e36-6a9c- ...",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### memory_forget:
+agent-zero  | remove memories by query threshold filter like memory_load
+agent-zero  | default threshold 0.75 prevent accidents
+agent-zero  | verify with load after delete leftovers by IDs
+agent-zero  | usage:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "Let's remove all memories about cars",
+agent-zero  |     ],
+agent-zero  |     "headline": "Forgetting all memories about cars",
+agent-zero  |     "tool_name": "memory_forget",
+agent-zero  |     "tool_args": {
+agent-zero  |         "query": "cars",
+agent-zero  |         "threshold": 0.75,
+agent-zero  |         "filter": "timestamp.startswith('2022-01-01')",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### notify_user:
+agent-zero  | This tool can be used to notify the user of a message independent of the current task.
+agent-zero  | 
+agent-zero  | !!! This is a universal notification tool
+agent-zero  | !!! Supported notification types: info, success, warning, error, progress
+agent-zero  | 
+agent-zero  | #### Arguments:
+agent-zero  |  *  "message" (string) : The message to be displayed to the user.
+agent-zero  |  *  "title" (Optional, string) : The title of the notification.
+agent-zero  |  *  "detail" (Optional, string) : The detail of the notification. May contain html tags.
+agent-zero  |  *  "type" (Optional, string) : The type of the notification. Can be "info", "success", "warning", "error", "progress".
+agent-zero  | 
+agent-zero  | #### Usage examples:
+agent-zero  | ##### 1: Success notification
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "tool_name": "notify_user",
+agent-zero  |     "tool_args": {
+agent-zero  |         "message": "Important notification: task xyz is completed succesfully",
+agent-zero  |         "title": "Task Completed",
+agent-zero  |         "detail": "This is a test notification detail with <a href='https://www.google.com'>link</a>",
+agent-zero  |         "type": "success"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | ##### 2: Error notification
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "tool_name": "notify_user",
+agent-zero  |     "tool_args": {
+agent-zero  |         "message": "Important notification: task xyz is failed",
+agent-zero  |         "title": "Task Failed",
+agent-zero  |         "detail": "This is a test notification detail with <a href='https://www.google.com'>link</a> and <img src='https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'>",
+agent-zero  |         "type": "error"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### response:
+agent-zero  | final answer to user
+agent-zero  | ends task processing use only when done or no task active
+agent-zero  | put result in text arg
+agent-zero  | always use markdown formatting headers bold text lists
+agent-zero  | full message is automatically markdown do not wrap use emojis as icons improve readability
+agent-zero  | prefer using tables
+agent-zero  | focus nice structured output key selling point
+agent-zero  | output full file paths not only names to be clickable
+agent-zero  | images shown with ![alt](img:///path/to/image.png)
+agent-zero  | all math and variables wrap with latex notation delimiters <latex>x = ...</latex>, use only single line latex do formatting in markdown instead
+agent-zero  | speech: text and lists are spoken, tables and code blocks not, therefore use tables for files and technicals, use text and lists for 
+plain english, do not include technical details in lists
+agent-zero  | 
+agent-zero  | usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Explaining why...",
+agent-zero  |     "tool_name": "response",
+agent-zero  |     "tool_args": {
+agent-zero  |         "text": "Answer to the user",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | **tips**
+agent-zero  | ALWAYS remember to use `§§include(<path>)` replacement to include previous tool results
+agent-zero  | rewriting text is slow and expensive, include when possible
+agent-zero  | NEVER rewrite subordinate responses
+agent-zero  | 
+agent-zero  | ## Task Scheduler Subsystem:
+agent-zero  | The task scheduler is a part of agent-zero enabling the system to execute
+agent-zero  | arbitrary tasks defined by a "system prompt" and "user prompt".
+agent-zero  | 
+agent-zero  | When the task is executed the prompts are being run in the background in a context
+agent-zero  | conversation with the goal of completing the task described in the prompts.
+agent-zero  | 
+agent-zero  | Dedicated context means the task will run in it's own chat. If task is created without the
+agent-zero  | dedicated_context flag then the task will run in the chat it was created in including entire history.
+agent-zero  | 
+agent-zero  | There are manual and automatically executed tasks.
+agent-zero  | Automatic execution happens by a schedule defined when creating the task.
+agent-zero  | 
+agent-zero  | Tasks are run asynchronously. If you need to wait for a running task's completion or need the result of the last task run, use the scheduler:wait_for_task tool. It will wait for the task completion in case the task is currently running and will provide the result of the last execution.
+agent-zero  | 
+agent-zero  | ### Important instructions
+agent-zero  | When a task is scheduled or planned, do not manually run it, if you have no more tasks, respond to user.
+agent-zero  | Be careful not to create recursive prompt, do not send a message that would make the agent schedule more tasks, no need to mention the interval in message, just the objective.
+agent-zero  | !!! When the user asks you to execute a task, first check if the task already exists and do not create a new task for execution. Execute the existing task instead. If the task in question does not exist ask the user what action to take. Never create tasks if asked to execute a task.
+agent-zero  | 
+agent-zero  | ### Types of scheduler tasks
+agent-zero  | There are 3 types of scheduler tasks:
+agent-zero  | 
+agent-zero  | #### Scheduled - type="scheduled"
+agent-zero  | This type of task is run by a recurring schedule defined in the crontab syntax with 5 fields (ex. */5 * * * * means every 5 minutes).agent-zero  | It is recurring and started automatically when the crontab syntax requires next execution..
+agent-zero  | 
+agent-zero  | #### Planned - type="planned"
+agent-zero  | This type of task is run by a linear schedule defined as discrete datetimes of the upcoming executions.
+agent-zero  | It is  started automatically when a scheduled time elapses.
+agent-zero  | 
+agent-zero  | #### AdHoc - type="adhoc"
+agent-zero  | This type of task is run manually and does not follow any schedule. It can be run explicitly by "scheduler:run_task" agent tool or by the user in the UI.
+agent-zero  | 
+agent-zero  | ### Tools to manage the task scheduler system and it's tasks
+agent-zero  | 
+agent-zero  | #### scheduler:list_tasks
+agent-zero  | List all tasks present in the system with their 'uuid', 'name', 'type', 'state', 'schedule' and 'next_run'.
+agent-zero  | All runnable tasks can be listed and filtered here. The arguments are filter fields.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * state: list(str) (Optional) - The state filter, one of "idle", "running", "disabled", "error". To only show tasks in given state.  
+agent-zero  | * type: list(str) (Optional) - The task type filter, one of "adhoc", "planned", "scheduled"
+agent-zero  | * next_run_within: int (Optional) - The next run of the task must be within this many minutes
+agent-zero  | * next_run_after: int (Optional) - The next run of the task must be after not less than this many minutes
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I must look for planned runnable tasks with name ... and state idle or error",
+agent-zero  |         "The tasks should run within next 20 minutes"
+agent-zero  |     ],
+agent-zero  |     "headline": "Searching for planned runnable tasks to execute soon",
+agent-zero  |     "tool_name": "scheduler:list_tasks",
+agent-zero  |     "tool_args": {
+agent-zero  |         "state": ["idle", "error"],
+agent-zero  |         "type": ["planned"],
+agent-zero  |         "next_run_within": 20
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:find_task_by_name
+agent-zero  | List all tasks whose name is matching partially or fully the provided name parameter.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The task name to look for
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I must look for tasks with name XYZ"
+agent-zero  |     ],
+agent-zero  |     "headline": "Finding tasks by name XYZ",
+agent-zero  |     "tool_name": "scheduler:find_task_by_name",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XYZ"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:show_task
+agent-zero  | Show task details for scheduler task with the given uuid.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * uuid: string - The uuid of the task to display
+agent-zero  | 
+agent-zero  | ##### Usage (execute task with uuid "xyz-123"):
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need details of task xxx-yyy-zzz",
+agent-zero  |     ],
+agent-zero  |     "headline": "Retrieving task details and configuration",
+agent-zero  |     "tool_name": "scheduler:show_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "uuid": "xxx-yyy-zzz",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:run_task
+agent-zero  | Execute a task manually which is not in "running" state
+agent-zero  | This can be used to trigger tasks manually.
+agent-zero  | Normally you should only "run" tasks manually if they are in the "idle" state.
+agent-zero  | It is also advised to only run "adhoc" tasks manually but every task type can be triggered by this tool.
+agent-zero  | You can pass input data in text form as the "context" argument. The context will then be prepended to the task prompt when executed. 
+This way you can pass for example result of one task as the input of another task or provide additional information specific to this one task run. 
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * uuid: string - The uuid of the task to run. Can be retrieved for example from "scheduler:tasks_list"
+agent-zero  | * context: (Optional) string - The context that will be prepended to the actual task prompt as contextual information.
+agent-zero  | 
+agent-zero  | ##### Usage (execute task with uuid "xyz-123"):
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I must run task xyz-123",
+agent-zero  |     ],
+agent-zero  |     "headline": "Manually executing scheduled task",
+agent-zero  |     "tool_name": "scheduler:run_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "uuid": "xyz-123",
+agent-zero  |         "context": "This text is useful to execute the task more precisely"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:delete_task
+agent-zero  | Delete the task defined by the given uuid from the system.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * uuid: string - The uuid of the task to run. Can be retrieved for example from "scheduler:tasks_list"
+agent-zero  | 
+agent-zero  | ##### Usage (execute task with uuid "xyz-123"):
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I must delete task xyz-123",
+agent-zero  |     ],
+agent-zero  |     "headline": "Removing task from scheduler",
+agent-zero  |     "tool_name": "scheduler:delete_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "uuid": "xyz-123",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:create_scheduled_task
+agent-zero  | Create a task within the scheduler system with the type "scheduled".
+agent-zero  | The scheduled type of tasks is being run by a cron schedule that you must provide.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The name of the task, will also be displayed when listing tasks
+agent-zero  | * system_prompt: str - The system prompt to be used when executing the task
+agent-zero  | * prompt: str - The actual prompt with the task definition
+agent-zero  | * schedule: dict[str,str] - the dict of all cron schedule values. The keys are descriptive: minute, hour, day, month, weekday. The values are cron syntax fields named by the keys.
+agent-zero  | * attachments: list[str] - Here you can add message attachments, valid are filesystem paths and internet urls
+agent-zero  | * dedicated_context: bool - if false, then the task will run in the context it was created in. If true, the task will have it's own context. If unspecified then false is assumed. The tasks run in the context they were created in by default.
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to create a scheduled task that runs every 20 minutes in a separate chat"
+agent-zero  |     ],
+agent-zero  |     "headline": "Creating recurring cron-scheduled email task",
+agent-zero  |     "tool_name": "scheduler:create_scheduled_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XXX",
+agent-zero  |         "system_prompt": "You are a software developer",
+agent-zero  |         "prompt": "Send the user an email with a greeting using python and smtp. The user's address is: xxx@yyy.zzz",
+agent-zero  |         "attachments": [],
+agent-zero  |         "schedule": {
+agent-zero  |             "minute": "*/20",
+agent-zero  |             "hour": "*",
+agent-zero  |             "day": "*",
+agent-zero  |             "month": "*",
+agent-zero  |             "weekday": "*",
+agent-zero  |         },
+agent-zero  |         "dedicated_context": true
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:create_adhoc_task
+agent-zero  | Create a task within the scheduler system with the type "adhoc".
+agent-zero  | The adhoc type of tasks is being run manually by "scheduler:run_task" tool or by the user via ui.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The name of the task, will also be displayed when listing tasks
+agent-zero  | * system_prompt: str - The system prompt to be used when executing the task
+agent-zero  | * prompt: str - The actual prompt with the task definition
+agent-zero  | * attachments: list[str] - Here you can add message attachments, valid are filesystem paths and internet urls
+agent-zero  | * dedicated_context: bool - if false, then the task will run in the context it was created in. If true, the task will have it's own context. If unspecified then false is assumed. The tasks run in the context they were created in by default.
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to create an adhoc task that can be run manually when needed"
+agent-zero  |     ],
+agent-zero  |     "headline": "Creating on-demand email task",
+agent-zero  |     "tool_name": "scheduler:create_adhoc_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XXX",
+agent-zero  |         "system_prompt": "You are a software developer",
+agent-zero  |         "prompt": "Send the user an email with a greeting using python and smtp. The user's address is: xxx@yyy.zzz",
+agent-zero  |         "attachments": [],
+agent-zero  |         "dedicated_context": false
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:create_planned_task
+agent-zero  | Create a task within the scheduler system with the type "planned".
+agent-zero  | The planned type of tasks is being run by a fixed plan, a list of datetimes that you must provide.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * name: str - The name of the task, will also be displayed when listing tasks
+agent-zero  | * system_prompt: str - The system prompt to be used when executing the task
+agent-zero  | * prompt: str - The actual prompt with the task definition
+agent-zero  | * plan: list(iso datetime string) - the list of all execution timestamps. The dates should be in the 24 hour (!) strftime iso format: "%Y-%m-%dT%H:%M:%S"
+agent-zero  | * attachments: list[str] - Here you can add message attachments, valid are filesystem paths and internet urls
+agent-zero  | * dedicated_context: bool - if false, then the task will run in the context it was created in. If true, the task will have it's own context. If unspecified then false is assumed. The tasks run in the context they were created in by default.
+agent-zero  | 
+agent-zero  | ##### Usage:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to create a planned task to run tomorrow at 6:25 PM",
+agent-zero  |         "Today is 2025-04-29 according to system prompt"
+agent-zero  |     ],
+agent-zero  |     "headline": "Creating planned task for specific datetime",
+agent-zero  |     "tool_name": "scheduler:create_planned_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "name": "XXX",
+agent-zero  |         "system_prompt": "You are a software developer",
+agent-zero  |         "prompt": "Send the user an email with a greeting using python and smtp. The user's address is: xxx@yyy.zzz",
+agent-zero  |         "attachments": [],
+agent-zero  |         "plan": ["2025-04-29T18:25:00"],
+agent-zero  |         "dedicated_context": false
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | #### scheduler:wait_for_task
+agent-zero  | Wait for the completion of a scheduler task identified by the uuid argument and return the result of last execution of the task.     
+agent-zero  | Attention: You can only wait for tasks running in a different chat context (dedicated). Tasks with dedicated_context=False can not be waited for.
+agent-zero  | 
+agent-zero  | ##### Arguments:
+agent-zero  | * uuid: string - The uuid of the task to wait for. Can be retrieved for example from "scheduler:tasks_list"
+agent-zero  | 
+agent-zero  | ##### Usage (wait for task with uuid "xyz-123"):
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need the most current result of the task xyz-123",
+agent-zero  |     ],
+agent-zero  |     "headline": "Waiting for task completion and results",
+agent-zero  |     "tool_name": "scheduler:wait_for_task",
+agent-zero  |     "tool_args": {
+agent-zero  |         "uuid": "xyz-123",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### search_engine:
+agent-zero  | provide query arg get search results
+agent-zero  | returns list urls titles descriptions
+agent-zero  | **Example usage**:
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Searching web for video content",
+agent-zero  |     "tool_name": "search_engine",
+agent-zero  |     "tool_args": {
+agent-zero  |         "query": "Video of...",
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 
+agent-zero  | ### wait
+agent-zero  | pause execution for a set time or until a timestamp
+agent-zero  | use args "seconds" "minutes" "hours" "days" for duration
+agent-zero  | use "until" with ISO timestamp for a specific time
+agent-zero  | usage:
+agent-zero  | 
+agent-zero  | 1 wait duration
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to wait..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "wait",
+agent-zero  |     "tool_args": {
+agent-zero  |         "minutes": 1,
+agent-zero  |         "seconds": 30
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | 
+agent-zero  | 2 wait timestamp
+agent-zero  | json
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I will wait until..."
+agent-zero  |     ],
+agent-zero  |     "headline": "...",
+agent-zero  |     "tool_name": "wait",
+agent-zero  |     "tool_args": {
+agent-zero  |         "until": "2025-10-20T10:00:00Z"
+agent-zero  |     }
+agent-zero  | }
+agent-zero  | ~~~
+agent-zero  |
+agent-zero  |
+agent-zero  | ## "Multimodal (Vision) Agent Tools" available:
+agent-zero  |
+agent-zero  | ### vision_load:
+agent-zero  | load image data to LLM
+agent-zero  | use paths arg for attachments
+agent-zero  | multiple images if needed
+agent-zero  | only bitmaps supported convert first if needed
+agent-zero  |
+agent-zero  | **Example usage**:
+agent-zero  | {
+agent-zero  |     "thoughts": [
+agent-zero  |         "I need to see the image...",
+agent-zero  |     ],
+agent-zero  |     "headline": "Loading image for visual analysis",
+agent-zero  |     "tool_name": "vision_load",
+agent-zero  |     "tool_args": {
+agent-zero  |         "paths": ["/path/to/image.png"],
+agent-zero  |     }
+agent-zero  | }

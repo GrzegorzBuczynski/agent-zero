@@ -110,13 +110,13 @@ class ChatGenerationResult:
 
         # if native reasoning detection works, there's no need to worry about thinking tags
         if self.native_reasoning:
-            processed_chunk = ChatChunk(response_delta=chunk["response_delta"], reasoning_delta=chunk["reasoning_delta"])
+            processed_chunk = ChatChunk(response_delta=chunk["response_delta"] or "", reasoning_delta=chunk["reasoning_delta"] or "")
         else:
             # if the model outputs thinking tags, we ned to parse them manually as reasoning
             processed_chunk = self._process_thinking_chunk(chunk)
 
-        self.reasoning += processed_chunk["reasoning_delta"]
-        self.response += processed_chunk["response_delta"]
+        self.reasoning += processed_chunk["reasoning_delta"] or ""
+        self.response += processed_chunk["response_delta"] or ""
 
         return processed_chunk
 
