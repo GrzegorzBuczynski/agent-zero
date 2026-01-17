@@ -46,3 +46,7 @@ instruments/**
 # for browser-use
 agent_history.gif
 
+# Docker build artifacts
+docker/run/agent-zero/
+docker/run/fs/
+
